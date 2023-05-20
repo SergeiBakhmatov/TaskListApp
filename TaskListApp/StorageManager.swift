@@ -41,11 +41,20 @@ final class StorageManager {
         return taskList
     }
     
-    func update() {
+    func update(name title: String,_ task: Task) {
         
+        let taskChange = viewContext.object(with: task.objectID) as? Task ?? Task()
+        taskChange.title = title
+        
+        do {
+            try viewContext.save()
+        } catch {
+            print(error.localizedDescription)
+        }
     }
     
     func delete() {
+
         
     }
     

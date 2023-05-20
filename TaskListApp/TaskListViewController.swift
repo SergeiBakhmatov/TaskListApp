@@ -45,14 +45,14 @@ final class TaskListViewController: UITableViewController {
     // MARK: - UITableViewDelegate
         override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
             let task = taskList[indexPath.row]
-            showAlert(withTitle: "Edit Task?", andMessage: "How do you want to change the task?", .updateTask)
+            showAlert(withTitle: "Edit Task", andMessage: "How do you want to change the task?", .updateTask, task)
         }
 
     @objc private func addNewTask() {
         showAlert(withTitle: "New Task", andMessage: "What do you want to do?", .newTask)
     }
     
-    private func showAlert(withTitle title: String, andMessage message: String,_ type: TypeAlert) {
+    private func showAlert(withTitle title: String, andMessage message: String,_ type: TypeAlert,_ task: Task = Task()) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         var action = UIAlertAction()
         switch type {
@@ -64,12 +64,13 @@ final class TaskListViewController: UITableViewController {
             
         case .updateTask:
             action = UIAlertAction(title: "Update Task", style: .default) { [unowned self] _ in
-                guard let task = alert.textFields?.first?.text, !task.isEmpty else { return }
-                save(task)
+                guard let taskName = alert.textFields?.first?.text, !taskName.isEmpty else { return }
+                update(taskName, task)
+                tableView.reloadData()
             }
             
         case .deleteTask:
-            action = UIAlertAction(title: "Save Task", style: .default) { [unowned self] _ in
+            action = UIAlertAction(title: "Delete Task", style: .default) { [unowned self] _ in
                 guard let task = alert.textFields?.first?.text, !task.isEmpty else { return }
                 save(task)
             }
@@ -91,6 +92,10 @@ final class TaskListViewController: UITableViewController {
         tableView.insertRows(at: [indexPath], with: .automatic)
         
         dismiss(animated: true)
+    }
+    
+    private func update(_ taskName: String,_ task: Task){
+        storageManager.update(name: taskName, task)
     }
 }
 
