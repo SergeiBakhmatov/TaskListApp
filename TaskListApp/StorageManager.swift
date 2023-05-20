@@ -10,7 +10,66 @@ import CoreData
 final class StorageManager {
     static let shared = StorageManager()
     
+    private lazy var viewContext = persistentContainer.viewContext
+    
     private init() {}
+    
+    func save(task taskName: String) -> Task {
+        let task = Task(context: viewContext)
+        task.title = taskName
+        
+        if viewContext.hasChanges {
+            do {
+                try viewContext.save()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        
+        return task
+    }
+    
+//    private func save(_ taskName: String) {
+//        let task = Task(context: viewContext)
+//        task.title = taskName
+//        taskList.append(task)
+//
+//        let indexPath = IndexPath(row: taskList.count - 1, section: 0)
+//        tableView.insertRows(at: [indexPath], with: .automatic)
+//
+//        if viewContext.hasChanges {
+//            do {
+//                try viewContext.save()
+//            } catch {
+//                print(error.localizedDescription)
+//            }
+//        }
+//        dismiss(animated: true)
+//    }
+    
+    
+    
+    
+    func fetchData() -> [Task] {
+        let fetchRequest = Task.fetchRequest()
+        var taskList: [Task] = []
+        
+        do {
+            taskList = try viewContext.fetch(fetchRequest)
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        return taskList
+    }
+    
+    func update() {
+        
+    }
+    
+    func delete() {
+        
+    }
     
     // MARK: - Core Data stack
     var persistentContainer: NSPersistentContainer = {
