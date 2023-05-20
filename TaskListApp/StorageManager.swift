@@ -11,7 +11,8 @@ final class StorageManager {
     static let shared = StorageManager()
     
     private lazy var viewContext = persistentContainer.viewContext
-    
+    private let fetchRequest = Task.fetchRequest()
+    private var taskList: [Task] = []
     private init() {}
     
     func save(task taskName: String) -> Task {
@@ -29,8 +30,6 @@ final class StorageManager {
     }
 
     func fetchData() -> [Task] {
-        let fetchRequest = Task.fetchRequest()
-        var taskList: [Task] = []
         
         do {
             taskList = try viewContext.fetch(fetchRequest)
@@ -54,7 +53,20 @@ final class StorageManager {
     }
     
     func delete() {
-
+        do {
+            taskList = try viewContext.fetch(fetchRequest)
+            taskList.forEach { viewContext.delete($0) }
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        if viewContext.hasChanges {
+            do {
+                try viewContext.save()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
         
     }
     

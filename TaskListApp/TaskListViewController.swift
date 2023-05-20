@@ -10,7 +10,6 @@ import UIKit
 enum TypeAlert {
     case newTask
     case updateTask
-    case deleteTask
 }
 
 final class TaskListViewController: UITableViewController {
@@ -52,6 +51,12 @@ final class TaskListViewController: UITableViewController {
         showAlert(withTitle: "New Task", andMessage: "What do you want to do?", .newTask)
     }
     
+    @objc private func deleteTasks() {
+        storageManager.delete()
+        taskList.removeAll()
+        tableView.reloadData()
+    }
+    
     private func showAlert(withTitle title: String, andMessage message: String,_ type: TypeAlert,_ task: Task = Task()) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         var action = UIAlertAction()
@@ -69,11 +74,6 @@ final class TaskListViewController: UITableViewController {
                 tableView.reloadData()
             }
             
-        case .deleteTask:
-            action = UIAlertAction(title: "Delete Task", style: .default) { [unowned self] _ in
-                guard let task = alert.textFields?.first?.text, !task.isEmpty else { return }
-                save(task)
-            }
             
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .destructive)
@@ -90,8 +90,6 @@ final class TaskListViewController: UITableViewController {
         
         let indexPath = IndexPath(row: taskList.count - 1, section: 0)
         tableView.insertRows(at: [indexPath], with: .automatic)
-        
-        dismiss(animated: true)
     }
     
     private func update(_ taskName: String,_ task: Task){
@@ -120,6 +118,12 @@ private extension TaskListViewController {
             target: self,
             action: #selector(addNewTask)
         )
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .trash,
+            target: self,
+            action: #selector(deleteTasks)
+        )
+
         navigationController?.navigationBar.tintColor = .white
     }
 }
