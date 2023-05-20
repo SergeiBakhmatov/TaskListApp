@@ -25,31 +25,9 @@ final class StorageManager {
                 print(error.localizedDescription)
             }
         }
-        
         return task
     }
-    
-//    private func save(_ taskName: String) {
-//        let task = Task(context: viewContext)
-//        task.title = taskName
-//        taskList.append(task)
-//
-//        let indexPath = IndexPath(row: taskList.count - 1, section: 0)
-//        tableView.insertRows(at: [indexPath], with: .automatic)
-//
-//        if viewContext.hasChanges {
-//            do {
-//                try viewContext.save()
-//            } catch {
-//                print(error.localizedDescription)
-//            }
-//        }
-//        dismiss(animated: true)
-//    }
-    
-    
-    
-    
+
     func fetchData() -> [Task] {
         let fetchRequest = Task.fetchRequest()
         var taskList: [Task] = []
